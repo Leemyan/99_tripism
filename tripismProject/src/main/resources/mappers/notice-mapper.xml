@@ -1,0 +1,104 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="noticeMapper">
+	<resultMap type="Notice" id="noticeResultSet">
+		<result column="notice_no" property="noticeNo"/>
+		<result column="notice_writer" property="noticeWriter"/>
+		<result column="notice_name" property="noticeName"/>
+		<result column="notice_contents" property="noticeContents"/>
+		<result column="notice_date" property="noticeDate"/>
+		<result column="count" property="count"/>
+		<result column="origin_name" property="originName"/>
+		<result column="change_name" property="changeName"/>
+		
+	</resultMap>
+	
+	<select id="noticeSelectListCount" resultType="_int">
+	select
+        	count(*)
+	    from tb_notice
+	    where notice_status = 'Y'
+	</select>
+
+	<select id="noticeSelectList" resultMap="noticeResultSet">
+		select
+        notice_no
+        , notice_name
+        , notice_writer
+        , to_char(notice_date, 'YYYY-MM-DD') as "notice_date"
+        , origin_name
+    from tb_notice
+    where notice_status = 'Y'
+    order
+        by  notice_no desc
+	</select>
+	
+	<insert id="insertNotice">
+	insert
+		into tb_notice
+				(
+				notice_no
+				, notice_writer
+				, notice_name
+				, notice_contents
+				, origin_name
+				, change_name
+				)
+				values
+				(
+				seq_noticeno.nextval
+                , #{noticeWriter}
+				, #{noticeName}
+                , #{noticeContents}
+				, #{originName}
+				, #{changeName}
+				)
+	</insert>
+	
+	<update id="increaseCount">
+		update
+				tb_notice
+			set count = count + 1
+			where notice_no = #{noticeNo}
+			and notice_status = 'Y'
+	</update>
+	
+
+	
+		<select id="selectNotice" resultMap="noticeResultSet">
+		select
+				notice_no
+				, notice_name
+				, notice_writer
+				, notice_contents
+				, to_char(notice_date, 'YYYY-MM-DD') as "notice_date"
+				, origin_name
+				, change_name
+			from tb_notice
+			where notice_no = #{noticeNo}
+			
+	</select>
+	
+	<update id="updateNotice">
+		update
+				tb_notice
+			set notice_name = #{noticeName}
+				, notice_contents = #{noticeContents}
+				, origin_name = #{originName}
+				, change_name = #{changeName}
+			where notice_no = #{noticeNo}
+	</update>	
+
+		<update id="deleteBoard">
+		update
+				tb_notice
+			set notice_status = 'N'
+			where notice_no = #{noticeNo}
+			
+	</update>
+	
+
+</mapper>

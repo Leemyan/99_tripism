@@ -1,2 +1,2 @@
-# tripism
-Final Project 2023 
+# tripismProject
+tripismProject

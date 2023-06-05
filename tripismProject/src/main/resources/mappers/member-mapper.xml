@@ -1,0 +1,313 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+
+<mapper namespace="memberMapper">
+	<resultMap type="Member" id="memberResultSet">
+		<result column="MEM_NO" property="memNo"/>
+		<result column="MEM_ID" property="memId"/>
+		<result column="MEM_PWD" property="memPwd"/>
+		<result column="MEM_NAME" property="memName"/>
+		<result column="MEM_NICKNAME" property="memNickname"/>
+		<result column="GENDER" property="gender"/>
+		<result column="ENROLL_DATE" property="enrollDate"/>
+		<result column="MEM_STATUS" property="status"/>
+		<result column="MEM_MBTI" property="mbti"/>
+		<result column="MEM_EMAIL" property="email"/>
+		<result column="MEM_IMG" property="img"/>
+	</resultMap>
+	
+	<resultMap type="Folder" id="folderResultSet">
+		<result column="FOLDER_NO" property="folderNo"/>
+		<result column="MEM_NO" property="memNo"/>
+		<result column="FOLDER_NAME" property="folderName"/>
+	</resultMap>
+	
+	<resultMap type="BookMark" id="bookMarkResultSet">
+		<result column="BOOKMARK_NO" property="folderNo"/>
+		<result column="SPOT_NO" property="memNo"/>
+		<result column="FOLDER_NO" property="folderName"/>
+	</resultMap>
+	
+	<resultMap type="PnBoard" id="pnBoardResultSet">
+		<result column="post_no" property="postNo"/>
+		<result column="mem_no" property="memNo"/>
+		<result column="partner_name" property="partnerName"/>
+		<result column="partner_type" property="partnerType"/>
+		<result column="partner_original_img" property="partnerOriginalImg"/>
+		<result column="partner_change_img" property="partnerChangeImg"/>
+		<result column="partner_date" property="partnerDate"/>
+		<result column="partner_views" property="partnerViews"/>
+		<result column="partner_title" property="partnerTitle"/>
+		<result column="partner_content" property="partnerContent"/>
+		<result column="partner_start_date" property="partnerStartDate"/>
+		<result column="partner_end_date" property="partnerEndDate"/>
+		<result column="area_category_no" property="areaCategoryNo"/>
+		<result column="partner_number" property="partnerNumber"/>
+		<result column="partner_status" property="partnerStatus"/>
+		<collection property="member" resultMap="memberResultSet"/>
+		<collection property="spot" resultMap="spotResult"></collection>
+	</resultMap>
+	
+	<resultMap type="Spot" id="spotResult">
+		<result column="SPOT_NO" property="spotNo"/>
+		<result column="SPOT_CONTENT_ID" property="spotContentId"/>
+		<result column="SPOT_CONTENT_TYPE" property="spotContentType"/>
+		<result column="SPOT_CREATED_DATE" property="spotCreatedDate"/>
+		<result column="SPOT_MODIFIED_DATE" property="spotModifiedDate"/>
+		<result column="SPOT_TEL" property="spotTel"/>
+		<result column="SPOT_TITLE" property="spotTitle"/>
+		<result column="SPOT_IMG_PATH" property="spotImgPath"/>
+		<result column="SPOT_ADDRESS" property="spotAddress"/>
+		<result column="SPOT_POSTAL_CODE" property="spotPostalCode"/>
+		<result column="SPOT_MAPX" property="spotMapx"/>
+		<result column="SPOT_MAPY" property="spotMapy"/>
+		<result column="LARGE_CATEGORY_NO" property="largeCategoryNo"/>
+		<result column="MIDDLE_CATEGORY_NO" property="middleCategoryNo"/>
+		<result column="SMALL_CATEGORY_NO" property="smallCategoryNo"/>
+		<result column="AREA_CATEGORY_NO" property="areaCategoryNo"/>
+		<result column="CITY_CATEGORY_NO" property="cityCategoryNo"/>
+		<result column="SPOT_COUNT" property="spotCount"/>
+		<result column="SPOT_LIKE" property="spotLike"/>
+		
+		<result column="area_category_title" property="areaTitle"/>
+		<result column="sigungu_title" property="sigunguTitle"/>
+	</resultMap>
+	
+	<resultMap type="Follow" id="FollowResultSet">
+		<result column="FOLLOW_NO" property="followNo"/>
+		<result column="FOLLOWING_NO" property="followingNo"/>
+		<result column="FOLLOWER_NO" property="followerNo"/>
+	</resultMap>
+
+
+	<select id="loginMember" parameterType="Member" resultMap="memberResultSet">
+		select
+	        mem_no
+	      , mem_id
+	      , mem_pwd
+	      , mem_name
+	      , mem_nickname
+	      , gender
+	      , to_char(enroll_date, 'YYYY-MM-DD') as "enroll_date"
+	      , mem_status
+	      , mem_mbti
+	      , mem_email
+	      , mem_img
+	  from tb_member
+	 where mem_id = #{memId}
+	   and mem_status = 'Y'
+	</select>
+	
+	<insert id="insertMember">
+		insert
+			into tb_member
+			(
+			    mem_no
+			  ,	mem_id
+			  , mem_name
+			  , mem_pwd
+			  , mem_email
+			  , mem_nickname
+			  , gender
+			)
+			values
+			(
+			   seq_memno.nextval
+			 , #{memId}
+			 , #{memName}
+			 , #{memPwd}
+			 , #{email}
+			 , #{memNickname}
+			 , #{gender}
+			)
+	</insert>
+	
+	<select id="idCheck" resultType="_int">
+			select
+			   count(*)
+		  from tb_member
+		 where mem_id = #{checkId}
+	</select>
+	
+	<select id="nicknameCheck" resultType="_int">
+	         	select
+			   count(*)
+		  from tb_member
+		 where mem_nickname = #{checkNickname}
+	</select>
+	
+	<select id="emailCheck" resultType="_int">
+				select
+			   count(*)
+		  from tb_member
+		 where mem_email = #{email}
+		 
+	</select>
+	
+	<select id="idfind2" parameterType="Member" resultMap="memberResultSet">
+		select
+	        mem_no
+	      , mem_id
+	      , mem_name
+	      , mem_email
+	  from tb_member
+	 where mem_name = #{memName}
+	   and mem_email =#{email}
+	   and mem_status = 'Y'
+	</select>
+	
+	<select id="pwdfind" parameterType="Member" resultMap="memberResultSet">
+		select
+	        mem_no
+	      , mem_id
+	      , mem_pwd
+	      , mem_name
+	      , mem_nickname
+	      , gender
+	      , to_char(enroll_date, 'YYYY-MM-DD') as "enroll_date"
+	      , mem_status
+	      , mem_mbti
+	      , mem_email
+	      , mem_img
+	  from tb_member
+	 where mem_name = #{memName}
+	   and mem_id = #{memId}
+	   and mem_email = #{email}
+	   and mem_status = 'Y'
+	</select>
+	
+	<update id="pwdUpdate">
+		update
+			tb_member
+		 set mem_pwd = #{memPwd}
+		 where mem_id = #{memId}
+		  and mem_email = #{email}
+		  and mem_name = #{memName}
+	</update>
+	
+	<update id="insertMBTI">
+		update
+			tb_member
+		set mem_mbti = #{mbti}
+		where mem_id = #{memId}
+	</update>
+	
+	<update id="nicknameUpdate">
+		update
+			tb_member
+	    set mem_nickname = #{memNickname}
+	  where mem_id = #{memId}
+	</update>
+	
+	<update id="deleteMember">
+		update
+			tb_member
+		set mem_nickname = null
+		  , mem_status = 'N'
+		  , mem_email = null
+		  where mem_id= #{memId}
+	</update>
+	
+	<update id="profile">
+		update
+			tb_member
+		set mem_img = #{img}
+		where mem_no = #{memNo}
+		  and mem_id= #{memId}
+	</update>
+	
+	<insert id="insertFolder">
+		insert
+			into tb_bookmark_folder
+			(
+			    folder_no
+			  ,	mem_no
+			  , folder_name
+			)
+			values
+			(
+			   seq_folderno.nextval
+			 , #{memNo}
+			 , #{folderName}
+			)
+	</insert>
+	
+	<select id="writtenSelectList" resultMap="pnBoardResultSet">
+		select
+			p.post_no
+			,	p.partner_type
+			,	p.partner_original_img
+			,	p.partner_title
+			,	p.partner_content
+			,	p.partner_start_date
+			,	p.partner_end_date
+			,	s.area_category_title
+            ,   m.gender
+            ,   m.mem_nickname
+            ,	m.mem_mbti
+            ,	m.mem_img
+            ,   m.mem_no
+            ,   m.mem_id
+		from tb_partner p
+        inner join tb_member m
+        on  p.mem_no = m.mem_no
+        inner join tb_spot_area_category s
+        on p.area_category_no = s.area_category_no
+		where partner_status = 'Y'
+		  and m.mem_no = #{memNo}
+		order by post_no desc
+	</select>
+	
+	<select id="folderSelectList" resultMap="folderResultSet">
+	 select
+	        folder_no
+	      , mem_no
+	      , folder_name
+          , mem_nickname
+	   from tb_bookmark_folder
+	   join tb_member using (mem_no)
+	  where mem_no = #{memNo}
+	</select>
+	
+	
+	<select id="otherPage" resultMap="memberResultSet">
+	 select
+	        mem_no
+	      , mem_id
+	      , mem_name
+	      , mem_nickname
+	      , gender
+	      , mem_mbti
+	      , mem_email
+	      , mem_img
+  	  from tb_member
+     where mem_no = #{memNo}
+	</select>
+	
+	<insert id="insertBookMark">
+	insert
+		  into tb_bookmark
+			(
+			    bookmark_no
+			  ,	spot_no
+			  , folder_no
+			)
+			values
+			(
+			   seq_bookmarkno.nextval
+			 , #{spotNo}
+			 , #{folderNo}
+			)
+	</insert>
+	
+	<select id="selectSpotList" resultMap="spotResult">
+		select * 
+  from tb_bookmark
+  join tb_travel_spot using (spot_no)
+  where folder_no = #{folderNo}
+	</select>
+
+</mapper>
